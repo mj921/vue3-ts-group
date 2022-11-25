@@ -1,0 +1,1 @@
+export const getId = () => `${Date.now()}_${Math.random().toString().substring(2, Math.floor(Math.random() * 6) + 3)}`
