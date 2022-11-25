@@ -8,9 +8,6 @@
     theme="chrome"
     @init="jsonInit"
     :options="{
-      enableBasicAutocompletion: true,
-      enableSnippets: true,
-      enableLiveAutocompletion: true,
       tabSize: 2,
       showPrintMargin: false,
       fontSize: 13,
@@ -23,10 +20,10 @@
 </template>
 <script lang="ts" setup>
 import { VAceEditor } from 'vue3-ace-editor';
-import "ace-builds/webpack-resolver";
+// import "ace-builds/webpack-resolver";
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/theme-chrome';
-import 'ace-builds/src-noconflict/ext-language_tools';
+// import 'ace-builds/src-noconflict/ext-language_tools';
 import { computed } from 'vue';
 
 type Props = {

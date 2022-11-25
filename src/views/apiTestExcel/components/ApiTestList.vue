@@ -49,7 +49,7 @@
 </template>
 <script lang="ts" setup>
 import { provide, ref } from 'vue';
-import { AddApiTestExcel, ApiTestExcel, ApiTestRequestDataFormatRequest } from '..';
+import { AddApiTestExcel, ApiTestExcel, ApiTestRequestDataFormat } from '..';
 import AddApiTestRow from './AddApiTestRow.vue';
 import CustomDialog from './CustomDialog.vue';
 
@@ -63,7 +63,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const addVisible = ref(false);
 
-provide('excelData', props.dataList);
+provide('excelData', props);
 
 const editData = ref<AddApiTestExcel | undefined>(undefined);
 
@@ -109,7 +109,7 @@ const swrap = (index: number, type: 'up' | 'down' | 'top' | 'bottom') => {
     if (el.RequestDataFormat) {
       try {
         const temp = JSON.parse(el.RequestDataFormat);
-        temp.forEach((item: ApiTestRequestDataFormatRequest) => {
+        temp.forEach((item: ApiTestRequestDataFormat) => {
           if (typeof item.row !== 'undefined') {
             item.row = props.dataList.findIndex(val => val._id === item.rowId) + 1;
           }

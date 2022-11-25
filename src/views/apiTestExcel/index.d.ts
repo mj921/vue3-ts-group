@@ -73,26 +73,14 @@ export declare type ApiTestSql = {
   resultType: 'default' | 'interface' | '';
   equalType: 'condition' | '';
 };
-export declare type ApiTestRequestDataFormatNow = {
-  path: string;
-  type: 'now';
-  prefix?: string;
-  suffix?: string;
-}
-export declare type ApiTestRequestDataFormatRequest = {
+export declare type ApiTestRequestDataFormat = {
   path: string;
   rowId: string;
   row: number;
   valuePath: string;
-  type: 'request' | 'response';
-  listSearch?: string[];
-}
-export declare type ApiTestRequestDataFormat = ApiTestRequestDataFormatNow | ApiTestRequestDataFormatRequest;
-export declare type AddApiTestRequestDataFormat = {
-  [key in keyof ApiTestRequestDataFormatNow as Exclude<key, 'type'>]: ApiTestRequestDataFormatNow[key];
-} & {
-  [key in keyof ApiTestRequestDataFormatRequest as Exclude<key, 'type'>]: ApiTestRequestDataFormatRequest[key];
-} & {
-  type: ApiTestRequestDataFormatNow['type'] | ApiTestRequestDataFormatRequest['type'];
-}
+  type: 'request' | 'response' | 'now';
+  listSearch?: string;
+  prefix?: string;
+  suffix?: string;
+};
 export declare type ApiTestHeaders = {};

@@ -47,23 +47,23 @@
     </ElFormItem>
   </ElForm>
   <CustomDialog v-model="selectVisible" title="添加" :onConfirm="onAddConfirm">
-    <SelectApiTestRow ref="selectRef" @select="onRowSelect" />
+    <SelectApiTestRow v-model="addForm.rowId" ref="selectRef" @select="onRowSelect" />
   </CustomDialog>
 </template>
 <script lang="ts" setup>
 import { FormInstance, FormRules } from 'element-plus';
 import { computed, reactive, ref, toRaw } from 'vue';
-import { AddApiTestRequestDataFormat, ApiTestExcel } from '..';
+import { ApiTestRequestDataFormat, ApiTestExcel } from '..';
 import JsonEditor from './JsonEditor.vue';
 import CustomDialog from './CustomDialog.vue';
 import SelectApiTestRow from './SelectApiTestRow.vue';
 import { CirclePlus } from '@element-plus/icons-vue';
 
 type Props = {
-  defaultValue?: AddApiTestRequestDataFormat;
+  detail?: ApiTestRequestDataFormat;
 };
 const props = withDefaults(defineProps<Props>(), {
-  defaultValue: () => ({
+  detail: () => ({
     type: 'response',
     path: '',
     valuePath: '',
@@ -71,16 +71,16 @@ const props = withDefaults(defineProps<Props>(), {
     rowId: '',
     suffix: '',
     prefix: '',
-    listSearch: [],
+    listSearch: '[]',
   }),
 });
 type Emits = {
-  (e: 'success', val: AddApiTestRequestDataFormat): void;
+  (e: 'success', val: ApiTestRequestDataFormat): void;
 };
 
 const emits = defineEmits<Emits>();
 
-const addForm = reactive<AddApiTestRequestDataFormat>(props.defaultValue);
+const addForm = reactive<ApiTestRequestDataFormat>(props.detail);
 const typeList = ['response', 'request', 'now'];
 
 const selectVisible = ref(false);
@@ -115,7 +115,7 @@ const onTypeChange = () => {
   addForm.rowId = '';
   addForm.suffix = '';
   addForm.prefix = '';
-  addForm.listSearch = [];
+  addForm.listSearch = '[]';
 };
 
 const onRowSelect = (selectData: ApiTestExcel) => {

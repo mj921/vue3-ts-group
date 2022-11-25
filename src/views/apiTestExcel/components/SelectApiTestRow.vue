@@ -1,22 +1,22 @@
 <template>
   <ElTable
-    :data="data"
+    :data="data?.dataList"
     border
     highlight-current-row
     @current-change="selectChange"
   >
     <ElTableColumn :min-width="40">
       <template v-slot="{ row }">
-        <ElRadioGroup v-model="radioValue">
-          <ElRadio :label="row._id" size="small"></ElRadio>
+        <ElRadioGroup :modelValue="modelValue">
+          <ElRadio size="small" :label="row._id"><span></span></ElRadio>
         </ElRadioGroup>
       </template>
     </ElTableColumn>
-    <ElTableColumn prop="id" label="id" :min-width="40"></ElTableColumn>
+    <ElTableColumn prop="id" label="id" :width="50"></ElTableColumn>
     <ElTableColumn
       prop="method"
       label="method"
-      :min-width="80"
+      :width="80"
     ></ElTableColumn>
     <ElTableColumn
       prop="module"
@@ -32,20 +32,28 @@ import { ElRadioGroup } from 'element-plus';
 import { inject, ref } from 'vue';
 import { ApiTestExcel } from '..';
 
-type Emit = {
-  (e: 'select', val: ApiTestExcel): void;
-};
-const emit = defineEmits<Emit>();
+type Props = {
+  modelValue: string;
+}
 
-const data = inject<ApiTestExcel[]>('excelData');
+type Emits = {
+  (e: 'select', val: ApiTestExcel): void;
+  (e: 'update:modelValue', val: string): void;
+};
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+})
+const emits = defineEmits<Emits>();
+
+const data = inject<{ dataList: ApiTestExcel[] }>('excelData');
 const selectRow = ref<ApiTestExcel | null>(null);
-const radioValue = ref('');
 const selectChange = (row: ApiTestExcel) => {
-  radioValue.value = row._id;
+  emits('update:modelValue', row._id);
   selectRow.value = row;
 };
 const onConfirm = () => {
-  selectRow.value && emit('select', selectRow.value);
+  selectRow.value && emits('select', selectRow.value);
 };
 defineExpose({
   onConfirm

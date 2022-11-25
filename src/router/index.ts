@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 
 export default createRouter({
-  history: createWebHistory(import.meta.env.VITE_APP_BASE),
+  history: createWebHashHistory(import.meta.env.VITE_APP_BASE),
   routes: [{
     path: '/api-test-excel',
     name: 'apiTestExcel',
