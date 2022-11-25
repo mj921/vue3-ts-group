@@ -31,3 +31,4 @@ export default defineConfig({
     host: '0.0.0.0',
   },
 });
+// https://mj921.github.io/dysonsphereprogramtool/dist/#/

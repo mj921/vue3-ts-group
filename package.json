@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
+    "github": "vue-tsc && vite build --mode github",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -17,7 +18,9 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/node": "^18.11.9",
     "@vitejs/plugin-vue": "^3.2.0",
+    "dotenv": "^16.0.3",
     "file-loader": "^6.2.0",
     "sass": "^1.56.1",
     "typescript": "^4.6.4",
