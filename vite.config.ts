@@ -7,6 +7,7 @@ import IconsResolver from 'unplugin-icons/resolver';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/vue3-ts-group',
   plugins: [
     vue(),
     AutoImport({
@@ -31,4 +32,3 @@ export default defineConfig({
     host: '0.0.0.0',
   },
 });
-// https://mj921.github.io/dysonsphereprogramtool/dist/#/
