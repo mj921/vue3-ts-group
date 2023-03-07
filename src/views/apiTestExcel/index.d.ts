@@ -34,9 +34,10 @@ export declare type ApiTestExcel = {
   Reason: string;
   FormData: string;
   RequestDataFormat: string;
-  total: 'y' | '';
+  ActualDataFormat: string;
   delay: number;
   headers: string;
+  globalHeaders: string;
 };
 
 export declare type AddApiTestExcel = {
@@ -52,6 +53,7 @@ export declare type AddApiTestExcel = {
     | 'FormData'
     | 'headers'
     | 'RequestDataFormat'
+    | 'globalHeaders'
   >]: ApiTestExcel[key];
 } & {
   data: string;
@@ -59,6 +61,7 @@ export declare type AddApiTestExcel = {
   FormData: string;
   headers: string;
   RequestDataFormat: ApiTestRequestDataFormat[];
+  globalHeaders: ApiTestGlobalHeaderFormat[];
 };
 
 export declare type ApiTestData = {
@@ -82,5 +85,10 @@ export declare type ApiTestRequestDataFormat = {
   listSearch?: string;
   prefix?: string;
   suffix?: string;
+};
+export declare type ApiTestGlobalHeaderFormat = {
+  path: string;
+  key: string;
+  type: 'cover' | 'add';
 };
 export declare type ApiTestHeaders = {};

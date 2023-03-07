@@ -3,14 +3,10 @@
     <ElButton type="primary" size="small" @click="add">添加</ElButton>
   </div>
   <ElTable :data="list">
-    <ElTableColumn label="row" prop="row" :width="60"></ElTableColumn>
-    <ElTableColumn label="type" prop="type" :width="90"></ElTableColumn>
-    <ElTableColumn label="path" prop="path"></ElTableColumn>
-    <ElTableColumn label="valuePath" prop="valuePath"></ElTableColumn>
-    <ElTableColumn label="prefix" prop="prefix"></ElTableColumn>
-    <ElTableColumn label="suffix" prop="suffix"></ElTableColumn>
-    <ElTableColumn label="listSearch" prop="listSearch"></ElTableColumn>
-    <ElTableColumn label="操作" fixed="right">
+    <ElTableColumn label="key" prop="key" :minWidth="120"></ElTableColumn>
+    <ElTableColumn label="type" prop="type" :minWidth="80"></ElTableColumn>
+    <ElTableColumn label="path" prop="path" :minWidth="120"></ElTableColumn>
+    <ElTableColumn label="操作" fixed="right" :minWidth="80">
       <template v-slot="{ row, $index }">
         <div class="operation-btns">
           <ElButton text type="primary" @click="edit(row, $index)">编辑</ElButton>
@@ -19,21 +15,22 @@
     </ElTableColumn>
   </ElTable>
   <CustomDialog v-model="addVisible" title="添加" :onConfirm="onAddConfirm">
-    <AddRequestDataFormat ref="addRef" :detail="editData" @success="onSave" />
+    <AddGlobalHeader ref="addRef" :detail="editData" @success="onSave" />
   </CustomDialog>
 </template>
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { ApiTestRequestDataFormat } from '..';
+import { ApiTestGlobalHeaderFormat } from '..';
 import CustomDialog from './CustomDialog.vue';
 import AddRequestDataFormat from './AddRequestDataFormat.vue';
+import AddGlobalHeader from './AddGlobalHeader.vue';
 
 type Props = {
-  modelValue: ApiTestRequestDataFormat[];
+  modelValue: ApiTestGlobalHeaderFormat[];
 };
 
 type Emits = {
-  (e: 'update:modelValue', val: ApiTestRequestDataFormat[]): void;
+  (e: 'update:modelValue', val: ApiTestGlobalHeaderFormat[]): void;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -43,25 +40,25 @@ const emits = defineEmits<Emits>();
 
 const list = computed({
   get: () => props.modelValue,
-  set: (val: ApiTestRequestDataFormat[]) => {
+  set: (val: ApiTestGlobalHeaderFormat[]) => {
     emits('update:modelValue', val);
   },
 });
 
 const addVisible = ref(false);
 const editDataIndex = ref<number>(-1);
-const editData = ref<ApiTestRequestDataFormat | undefined>(undefined);
+const editData = ref<ApiTestGlobalHeaderFormat | undefined>(undefined);
 const add = () => {
   editData.value = undefined;
-  editDataIndex.value = -1
+  editDataIndex.value = -1;
   addVisible.value = true;
 };
-const edit = (row: ApiTestRequestDataFormat, index: number) => {
+const edit = (row: ApiTestGlobalHeaderFormat, index: number) => {
   editData.value = row;
   editDataIndex.value = index;
   addVisible.value = true;
 };
-const onSave = (val: ApiTestRequestDataFormat) => {
+const onSave = (val: ApiTestGlobalHeaderFormat) => {
   if (editData.value) {
     list.value[editDataIndex.value] = val;
     editData.value = undefined;

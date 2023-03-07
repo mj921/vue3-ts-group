@@ -2,12 +2,7 @@
   <ElForm ref="formRef" :model="addForm" :label-width="160" :rules="rules">
     <ElFormItem prop="method" label="method">
       <ElSelect v-model="addForm.method">
-        <ElOption
-          v-for="option in methodList"
-          :label="option"
-          :value="option"
-          :key="'method_' + option"
-        ></ElOption>
+        <ElOption v-for="option in methodList" :label="option" :value="option" :key="'method_' + option"></ElOption>
       </ElSelect>
     </ElFormItem>
     <ElFormItem prop="module" label="module">
@@ -31,16 +26,17 @@
     <ElFormItem prop="RequestDataFormat" label="RequestDataFormat">
       <RequestDataFormatList v-model="addForm.RequestDataFormat" />
     </ElFormItem>
-    <ElFormItem prop="total" label="total">
-      <ElSelect v-model="addForm.total">
-        <ElOption label="y" value="y"></ElOption>
-      </ElSelect>
+    <ElFormItem prop="ActualDataFormat" label="ActualDataFormat">
+      <JsonEditor v-model="addForm.ActualDataFormat" />
     </ElFormItem>
     <ElFormItem prop="delay" label="delay">
       <ElInput v-model.number="addForm.delay" />
     </ElFormItem>
     <ElFormItem prop="headers" label="headers">
       <JsonEditor v-model="addForm.headers" />
+    </ElFormItem>
+    <ElFormItem prop="globalHeaders" label="globalHeaders">
+      <GlobalHeaderList v-model="addForm.globalHeaders" />
     </ElFormItem>
   </ElForm>
 </template>
@@ -49,6 +45,7 @@ import { FormInstance, FormRules } from 'element-plus';
 import { reactive, ref, toRaw } from 'vue';
 import { AddApiTestExcel } from '..';
 import { getId } from '../../../utils';
+import GlobalHeaderList from './GlobalHeaderList.vue';
 import JsonEditor from './JsonEditor.vue';
 import RequestDataFormatList from './RequestDataFormatList.vue';
 
@@ -74,9 +71,10 @@ const addForm = reactive<AddApiTestExcel>(
     Expected_code: '',
     FormData: '{}',
     RequestDataFormat: [],
-    total: '',
+    ActualDataFormat: '',
     delay: 0,
     headers: '{}',
+    globalHeaders: [],
   }
 );
 const methodList = [

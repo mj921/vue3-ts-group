@@ -21,7 +21,7 @@ import { ApiTestExcel, ApiTestExcelPane, ApiTestRequestDataFormat } from '.';
 import * as XLSX from 'xlsx';
 import ApiTestList from './components/ApiTestList.vue';
 import { getId } from '../../utils';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage, ElMessageBox, TabPaneName } from 'element-plus';
 import 'element-plus/es/components/message-box/style/css';
 
 const tabList = ref<ApiTestExcelPane[]>([
@@ -47,8 +47,9 @@ const keyList: (keyof ApiTestExcel)[] = [
   'Reason',
   'FormData',
   'RequestDataFormat',
-  'total',
+  'ActualDataFormat',
   'delay',
+  'globalHeaders',
 ];
 const colKeyMap = keyList.reduce<{ [key in keyof ApiTestExcel]?: string }>(
   (o, el, i) => {
@@ -81,6 +82,8 @@ const beforeUpload = (file: any) => {
               'FormData',
               'headers',
               'RequestDataFormat',
+              'ActualDataFormat',
+              'globalHeaders',
             ].includes(key)
           ) {
             o[key] = o[key].replace(/'/g, '"');
@@ -99,6 +102,17 @@ const beforeUpload = (file: any) => {
               }
             });
             el.RequestDataFormat = JSON.stringify(temp);
+          } catch (error) {}
+        }
+        if (el.globalHeaders) {
+          try {
+            const temp = JSON.parse(el.globalHeaders);
+            temp.forEach((item: ApiTestRequestDataFormat) => {
+              if (typeof item.row !== 'undefined') {
+                item.rowId = data[item.row - 1]._id;
+              }
+            });
+            el.globalHeaders = JSON.stringify(temp);
           } catch (error) {}
         }
       });
@@ -157,9 +171,7 @@ const exportData = () => {
   );
 };
 
-const onTabsEdit = (targetName: string, action: 'remove' | 'add') => {
-  console.log(targetName, action);
-  
+const onTabsEdit = (targetName: TabPaneName | undefined, action: 'remove' | 'add') => {
   if (action === 'add') {
     ElMessageBox.prompt('', '添加sheet', {
       confirmButtonText: '确定',

@@ -20,24 +20,24 @@
       <ElTableColumn prop="Reason" label="Reason" :width="100"></ElTableColumn>
       <ElTableColumn prop="FormData" label="FormData" :width="160">
       </ElTableColumn>
-      <ElTableColumn
-        prop="RequestDataFormat"
-        label="RequestDataFormat"
-        :width="160"
-      >
+      <ElTableColumn prop="RequestDataFormat" label="RequestDataFormat" :width="160">
       </ElTableColumn>
-      <ElTableColumn prop="total" label="total" :width="70"></ElTableColumn>
+      <ElTableColumn prop="ActualDataFormat" label="ActualDataFormat" :width="160"></ElTableColumn>
       <ElTableColumn prop="delay" label="delay" :width="70"></ElTableColumn>
       <ElTableColumn prop="headers" label="headers" :width="160">
+      </ElTableColumn>
+      <ElTableColumn prop="globalHeaders" label="globalHeaders" :width="160">
       </ElTableColumn>
       <ElTableColumn label="操作" :width="220" fixed="right">
         <template v-slot="{ row, $index }">
           <div class="operation-btns">
             <ElButton text type="primary" @click="edit(row)">编辑</ElButton>
             <ElButton text type="primary" @click="swrap($index, 'up')" v-if="$index !== 0">上移</ElButton>
-            <ElButton text type="primary" @click="swrap($index, 'down')" v-if="$index !== dataList.length - 1">下移</ElButton>
+            <ElButton text type="primary" @click="swrap($index, 'down')" v-if="$index !== dataList.length - 1">下移
+            </ElButton>
             <ElButton text type="primary" @click="swrap($index, 'top')" v-if="$index !== 0">置顶</ElButton>
-            <ElButton text type="primary" @click="swrap($index, 'down')" v-if="$index !== dataList.length - 1">置底</ElButton>
+            <ElButton text type="primary" @click="swrap($index, 'down')" v-if="$index !== dataList.length - 1">置底
+            </ElButton>
           </div>
         </template>
       </ElTableColumn>
@@ -75,8 +75,12 @@ const edit = (row: ApiTestExcel) => {
   let rdf = [];
   try {
     rdf = JSON.parse(row.RequestDataFormat);
-  } catch (error) {}
-  editData.value = { ...row, RequestDataFormat: rdf };
+  } catch (error) { }
+  let ghs = [];
+  try {
+    ghs = JSON.parse(row.globalHeaders);
+  } catch (error) { }
+  editData.value = { ...row, RequestDataFormat: rdf, globalHeaders: ghs };
   addVisible.value = true;
 };
 
@@ -115,7 +119,7 @@ const swrap = (index: number, type: 'up' | 'down' | 'top' | 'bottom') => {
           }
         })
         el.RequestDataFormat = JSON.stringify(temp);
-      } catch (error) {}
+      } catch (error) { }
     }
   })
 }
@@ -132,24 +136,29 @@ const onSave = (saveData: AddApiTestExcel) => {
     url,
     sql,
     Expected_code,
-    FormData,
-    total,
+    FormData = '{}',
+    ActualDataFormat,
     delay,
     RequestDataFormat,
     headers,
+    globalHeaders,
   } = saveData;
+  const dataStr = data ? JSON.stringify(JSON.parse(data)) : '{}';
+  const FormDataStr = FormData ? JSON.stringify(JSON.parse(FormData)) : '{}';
+  const headersStr = headers ? JSON.stringify(JSON.parse(headers)) : '{}';
   if (modifyData) {
     modifyData.method = method;
     modifyData.module = module;
     modifyData.url = url;
-    modifyData.data = JSON.stringify(JSON.parse(data));
+    modifyData.data = dataStr;
     modifyData.sql = sql;
     modifyData.Expected_code = Expected_code;
-    modifyData.FormData = JSON.stringify(JSON.parse(FormData));
+    modifyData.FormData = FormDataStr;
     modifyData.RequestDataFormat = JSON.stringify(RequestDataFormat);
-    modifyData.total = total;
+    modifyData.ActualDataFormat = ActualDataFormat;
     modifyData.delay = delay;
-    modifyData.headers = JSON.stringify(JSON.parse(headers));
+    modifyData.headers = headersStr;
+    modifyData.globalHeaders = JSON.stringify(globalHeaders);
   } else {
     console.log(data);
     console.log(JSON.parse(data));
@@ -160,18 +169,19 @@ const onSave = (saveData: AddApiTestExcel) => {
       method,
       module,
       url,
-      data: JSON.stringify(JSON.parse(data)),
+      data: dataStr,
       sql,
       Expected_code,
       Actual_code: '',
       sql_result: '',
       Result: '',
       Reason: '',
-      FormData: JSON.stringify(JSON.parse(data)),
+      FormData: FormDataStr,
       RequestDataFormat: JSON.stringify(RequestDataFormat),
-      total,
+      ActualDataFormat,
       delay,
-      headers: JSON.stringify(JSON.parse(headers)),
+      headers: headersStr,
+      globalHeaders: JSON.stringify(globalHeaders),
     });
   }
 };
@@ -184,13 +194,16 @@ const onAddConfirm = () =>
 <style scoped lang="scss">
 .api-test-list {
   padding: 20px;
+
   .top-action-box {
     margin-bottom: 16px;
     display: flex;
+
     .el-button {
       margin-right: 8px;
     }
   }
+
   .operation-btns {
     .el-button {
       padding-left: 0;

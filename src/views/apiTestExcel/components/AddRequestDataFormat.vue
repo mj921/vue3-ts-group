@@ -71,7 +71,7 @@ const props = withDefaults(defineProps<Props>(), {
     rowId: '',
     suffix: '',
     prefix: '',
-    listSearch: '[]',
+    listSearch: '',
   }),
 });
 type Emits = {
