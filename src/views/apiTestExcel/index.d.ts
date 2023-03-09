@@ -1,7 +1,7 @@
 export declare type ApiTestExcelPane = {
   name: string;
   dataList: ApiTestExcel[];
-}
+};
 
 export declare type ApiTestExcel = {
   _id: string;
@@ -90,5 +90,8 @@ export declare type ApiTestGlobalHeaderFormat = {
   path: string;
   key: string;
   type: 'cover' | 'add';
+};
+export declare type ApiTestActualDataFormat = {
+  path: string;
 };
 export declare type ApiTestHeaders = {};

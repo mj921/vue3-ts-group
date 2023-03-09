@@ -27,7 +27,12 @@
       <RequestDataFormatList v-model="addForm.RequestDataFormat" />
     </ElFormItem>
     <ElFormItem prop="ActualDataFormat" label="ActualDataFormat">
-      <JsonEditor v-model="addForm.ActualDataFormat" />
+      <JsonEditor v-model="addForm.ActualDataFormat" disabled>
+        <ElButton size="small" type="primary" v-if="addForm.ActualDataFormat" @click="editActualData">修改</ElButton>
+        <ElButton size="small" type="primary" v-else @click="addActualData">添加</ElButton>
+        <ElButton size="small" type="primary" v-if="addForm.ActualDataFormat" @click="addForm.ActualDataFormat = ''">清空
+        </ElButton>
+      </JsonEditor>
     </ElFormItem>
     <ElFormItem prop="delay" label="delay">
       <ElInput v-model.number="addForm.delay" />
@@ -39,12 +44,17 @@
       <GlobalHeaderList v-model="addForm.globalHeaders" />
     </ElFormItem>
   </ElForm>
+  <CustomDialog v-model="actualDataVisible" title="添加" :onConfirm="onAddConfirm">
+    <ActualDataFormatForm :detail="editData" ref="actualDataFormRef" @success="onSave" />
+  </CustomDialog>
 </template>
 <script lang="ts" setup>
 import { FormInstance, FormRules } from 'element-plus';
 import { reactive, ref, toRaw } from 'vue';
-import { AddApiTestExcel } from '..';
+import { AddApiTestExcel, ApiTestActualDataFormat } from '..';
 import { getId } from '../../../utils';
+import CustomDialog from './CustomDialog.vue';
+import ActualDataFormatForm from './ActualDataFormatForm.vue'
 import GlobalHeaderList from './GlobalHeaderList.vue';
 import JsonEditor from './JsonEditor.vue';
 import RequestDataFormatList from './RequestDataFormatList.vue';
@@ -88,6 +98,8 @@ const methodList = [
   'connect',
 ];
 
+const actualDataVisible = ref(false);
+
 const rules: FormRules = {
   method: [{ required: true, message: '请选择method' }],
   url: [{ required: true, message: '请输入url' }],
@@ -106,7 +118,20 @@ const rules: FormRules = {
     },
   ],
 };
-
+const actualDataFormRef = ref<InstanceType<typeof ActualDataFormatForm>>();
+const editData = ref<ApiTestActualDataFormat | undefined>(undefined);
+const addActualData = () => {
+  editData.value = undefined;
+  actualDataVisible.value = true;
+}
+const editActualData = () => {
+  editData.value = addForm.ActualDataFormat ? JSON.parse(addForm.ActualDataFormat) : undefined;
+  actualDataVisible.value = true;
+}
+const onAddConfirm = () => {
+  actualDataFormRef.value?.onSubmit();
+  return Promise.resolve();
+}
 const formRef = ref<FormInstance>();
 
 const onSubmit = () => {
@@ -121,6 +146,10 @@ const onSubmit = () => {
     });
   });
 };
+const onSave = (val: ApiTestActualDataFormat) => {
+  addForm.ActualDataFormat = JSON.stringify(val);
+  editData.value = undefined;
+}
 defineExpose({
   onSubmit,
 });

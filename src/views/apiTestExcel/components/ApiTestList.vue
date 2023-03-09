@@ -42,7 +42,7 @@
         </template>
       </ElTableColumn>
     </ElTable>
-    <CustomDialog v-model="addVisible" title="添加" :width="1000" :onConfirm="onAddConfirm">
+    <CustomDialog v-model="addVisible" title="添加" :width="1000" maxHeight="60vh" :onConfirm="onAddConfirm">
       <AddApiTestRow ref="addRef" :detail="editData" @success="onSave" />
     </CustomDialog>
   </div>

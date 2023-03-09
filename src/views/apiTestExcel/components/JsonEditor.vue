@@ -1,22 +1,16 @@
 <template>
   <div style="margin-bottom: 8px;">
     <ElButton type="primary" size="small" @click="jsonInit">格式化</ElButton>
+    <slot></slot>
   </div>
-  <VAceEditor
-    v-model:value="content"
-    lang="json"
-    theme="chrome"
-    @init="jsonInit"
-    :options="{
-      tabSize: 2,
-      showPrintMargin: false,
-      fontSize: 13,
-    }"
-    :style="{
-      height: `${lines * 17.5}px`,
-      width: '100%',
-    }"
-  />
+  <VAceEditor v-model:value="content" :readonly="disabled" lang="json" theme="chrome" @init="jsonInit" :options="{
+    tabSize: 2,
+    showPrintMargin: false,
+    fontSize: 13,
+  }" :style="{
+  height: `${lines * 17.5}px`,
+  width: '100%',
+}" />
 </template>
 <script lang="ts" setup>
 import { VAceEditor } from 'vue3-ace-editor';
@@ -29,6 +23,7 @@ import { computed } from 'vue';
 type Props = {
   modelValue: string | Object;
   lines?: number;
+  disabled?: boolean;
 }
 
 type Emits = {
@@ -38,6 +33,7 @@ type Emits = {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '{}',
   lines: 16,
+  disabled: false,
 })
 const emits = defineEmits<Emits>();
 
@@ -51,8 +47,7 @@ const content = computed({
 const jsonInit = () => {
   try {
     content.value = content.value ? JSON.stringify(JSON.parse(content.value), null, 2) : '';
-  } catch (error) {}
+  } catch (error) { }
 }
 </script>
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>
