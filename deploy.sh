@@ -17,7 +17,7 @@ echo > .nojekyll
 
 git init
 git checkout -B gh-pages
-git add .
+git add . -f
 git commit -m 'deploy'
 
 # 如果你要部署在 https://<USERNAME>.github.io
@@ -25,5 +25,7 @@ git commit -m 'deploy'
 
 # 如果你要部署在 https://<USERNAME>.github.io/<REPO>
 git push -f git@github.com:mj921/vue3-ts-group.git gh-pages
+
+git checkout master
 
 cd -
