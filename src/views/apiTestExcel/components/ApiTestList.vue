@@ -57,7 +57,7 @@
 </template>
 <script lang="ts" setup>
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { provide, ref, toRef, watch } from 'vue';
+import { inject, provide, Ref, ref, toRef, watch } from 'vue';
 import { AddApiTestExcel, ApiTestExcel, ApiTestExcelPane, ApiTestRequestDataFormat } from '..';
 import { getId } from '../../../utils';
 import AddApiTestRow from './AddApiTestRow.vue';
@@ -116,20 +116,27 @@ const edit = (row: ApiTestExcel) => {
   addVisible.value = true;
 };
 
+const tabList = inject<Ref<ApiTestExcelPane[]>>('tabList');
+
 const calcRow = () => {
-  props.dataList.forEach((el, index) => {
-    el.id = index + 1;
-    if (el.RequestDataFormat) {
-      try {
-        const temp = JSON.parse(el.RequestDataFormat);
-        temp.forEach((item: ApiTestRequestDataFormat) => {
-          if (typeof item.row !== 'undefined') {
-            item.row = props.dataList.findIndex(val => val._id === item.rowId) + 1;
-          }
-        })
-        el.RequestDataFormat = JSON.stringify(temp);
-      } catch (error) { }
-    }
+  console.log();
+  tabList?.value.forEach((pane) => {
+    pane.dataList.forEach((el, index) => {
+      if (pane.name === props.currentTab) {
+        el.id = index + 1;
+      }
+      if (el.RequestDataFormat) {
+        try {
+          const temp = JSON.parse(el.RequestDataFormat);
+          temp.forEach((item: ApiTestRequestDataFormat) => {
+            if (typeof item.row !== 'undefined' && (item.sheetName ?? pane.name) === props.currentTab) {
+              item.row = props.dataList.findIndex(val => val._id === item.rowId) + 1;
+            }
+          })
+          el.RequestDataFormat = JSON.stringify(temp);
+        } catch (error) { }
+      }
+    })
   })
 }
 

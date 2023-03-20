@@ -19,7 +19,7 @@
       v-if="['request', 'response'].includes(addForm.type)"
     >
       <ElInput
-        :model-value="addForm.row || ''"
+        :model-value="(addForm.sheetName || currentTab) + '/' + addForm.row || ''"
         readonly
         :suffix-icon="CirclePlus"
         @click="selectVisible = true"
@@ -52,7 +52,7 @@
 </template>
 <script lang="ts" setup>
 import { FormInstance, FormRules } from 'element-plus';
-import { computed, reactive, ref, toRaw } from 'vue';
+import { computed, inject, reactive, ref, toRaw } from 'vue';
 import { ApiTestRequestDataFormat, ApiTestExcel } from '..';
 import JsonEditor from './JsonEditor.vue';
 import CustomDialog from './CustomDialog.vue';
@@ -79,6 +79,7 @@ type Emits = {
 };
 
 const emits = defineEmits<Emits>();
+const currentTab = inject('currentTab');
 
 const addForm = reactive<ApiTestRequestDataFormat>(props.detail);
 const typeList = ['response', 'request', 'now'];
@@ -118,8 +119,9 @@ const onTypeChange = () => {
   addForm.listSearch = '[]';
 };
 
-const onRowSelect = (selectData: ApiTestExcel) => {
+const onRowSelect = (selectData: ApiTestExcel, tabName: string) => {
   addForm.row = selectData.id;
+  addForm.sheetName = tabName;
   addForm.rowId = selectData._id;
 };
 

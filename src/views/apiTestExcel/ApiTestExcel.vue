@@ -16,7 +16,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { provide, ref } from 'vue';
 import { ApiTestExcel, ApiTestExcelPane, ApiTestRequestDataFormat } from '.';
 import * as XLSX from 'xlsx';
 import ApiTestList from './components/ApiTestList.vue';
@@ -60,6 +60,8 @@ const colKeyMap = keyList.reduce<{ [key in keyof ApiTestExcel]?: string }>(
 );
 
 const sheets = ref<string[]>();
+provide('currentTab', tabName);
+provide('tabList', tabList);
 
 const beforeUpload = (file: any) => {
   const reader = new FileReader();
@@ -102,7 +104,7 @@ const beforeUpload = (file: any) => {
               }
             });
             el.RequestDataFormat = JSON.stringify(temp);
-          } catch (error) {}
+          } catch (error) { }
         }
         if (el.globalHeaders) {
           try {
@@ -113,7 +115,7 @@ const beforeUpload = (file: any) => {
               }
             });
             el.globalHeaders = JSON.stringify(temp);
-          } catch (error) {}
+          } catch (error) { }
         }
       });
       list.push({
@@ -185,7 +187,7 @@ const onTabsEdit = (targetName: TabPaneName | undefined, action: 'remove' | 'add
         name: value,
         dataList: [],
       });
-    }).catch(() => {});
+    }).catch(() => { });
   } else if (action === 'remove') {
     ElMessageBox.confirm('是否确定删除sheet', '删除', {
       confirmButtonText: '确定',
@@ -193,16 +195,18 @@ const onTabsEdit = (targetName: TabPaneName | undefined, action: 'remove' | 'add
       type: 'warning',
     }).then(() => {
       tabList.value = tabList.value.filter((tab) => tab.name !== targetName);
-    }).catch(() => {});
+    }).catch(() => { });
   }
 };
 </script>
 <style scoped lang="scss">
 .api-test-excel {
   padding: 20px;
+
   .top-action-box {
     margin-bottom: 16px;
     display: flex;
+
     .el-button {
       margin-right: 8px;
     }

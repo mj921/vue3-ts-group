@@ -3,14 +3,15 @@
     <ElButton type="primary" size="small" @click="add">添加</ElButton>
   </div>
   <ElTable :data="list">
-    <ElTableColumn label="row" prop="row" :width="60"></ElTableColumn>
-    <ElTableColumn label="type" prop="type" :width="90"></ElTableColumn>
-    <ElTableColumn label="path" prop="path"></ElTableColumn>
-    <ElTableColumn label="valuePath" prop="valuePath"></ElTableColumn>
-    <ElTableColumn label="prefix" prop="prefix"></ElTableColumn>
-    <ElTableColumn label="suffix" prop="suffix"></ElTableColumn>
-    <ElTableColumn label="listSearch" prop="listSearch"></ElTableColumn>
-    <ElTableColumn label="操作" fixed="right">
+    <ElTableColumn label="type" prop="type" :min-width="80" fixed="left"></ElTableColumn>
+    <ElTableColumn label="path" prop="path" :min-width="100" fixed="left"></ElTableColumn>
+    <ElTableColumn label="sheetName" prop="row" :min-width="100"></ElTableColumn>
+    <ElTableColumn label="row" prop="row" :min-width="50"></ElTableColumn>
+    <ElTableColumn label="valuePath" prop="valuePath" :min-width="100"></ElTableColumn>
+    <ElTableColumn label="prefix" prop="prefix" :min-width="120"></ElTableColumn>
+    <ElTableColumn label="suffix" prop="suffix" :min-width="120"></ElTableColumn>
+    <ElTableColumn label="listSearch" prop="listSearch" :min-width="100"></ElTableColumn>
+    <ElTableColumn label="操作" fixed="right" :min-width="80">
       <template v-slot="{ row, $index }">
         <div class="operation-btns">
           <ElButton text type="primary" @click="edit(row, $index)">编辑</ElButton>

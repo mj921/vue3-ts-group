@@ -85,6 +85,7 @@ export declare type ApiTestRequestDataFormat = {
   listSearch?: string;
   prefix?: string;
   suffix?: string;
+  sheetName?: string;
 };
 export declare type ApiTestGlobalHeaderFormat = {
   path: string;
