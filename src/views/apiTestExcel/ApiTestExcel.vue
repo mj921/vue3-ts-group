@@ -10,7 +10,7 @@
     </div>
     <ElTabs v-model="tabName" type="card" editable @edit="onTabsEdit">
       <ElTabPane v-for="pane in tabList" :label="pane.name" :name="pane.name">
-        <ApiTestList :dataList="pane.dataList" />
+        <ApiTestList :dataList="pane.dataList" :tabList="tabList" :currentTab="pane.name" />
       </ElTabPane>
     </ElTabs>
   </div>
@@ -74,7 +74,7 @@ const beforeUpload = (file: any) => {
       for (let i = 1; i < lines; i++) {
         const o: { [key: string]: any } = {};
         keyList.forEach((key) => {
-          o[key] = ws[`${colKeyMap[key]}${i + 1}`]?.v || '';
+          o[key] = ws[`${colKeyMap[key]}${i + 1}`]?.v ?? '';
           if (
             [
               'sql',
