@@ -2,41 +2,20 @@
   <ElForm ref="formRef" :model="addForm" :label-width="160" :rules="rules">
     <ElFormItem prop="type" label="type">
       <ElSelect v-model="addForm.type" @change="onTypeChange">
-        <ElOption
-          v-for="option in typeList"
-          :label="option"
-          :value="option"
-          :key="'type_' + option"
-        ></ElOption>
+        <ElOption v-for="option in typeList" :label="option" :value="option" :key="'type_' + option"></ElOption>
       </ElSelect>
     </ElFormItem>
     <ElFormItem prop="path" label="path">
       <ElInput v-model="addForm.path" />
     </ElFormItem>
-    <ElFormItem
-      prop="row"
-      label="row"
-      v-if="['request', 'response'].includes(addForm.type)"
-    >
-      <ElInput
-        :model-value="(addForm.sheetName || currentTab) + '/' + addForm.row || ''"
-        readonly
-        :suffix-icon="CirclePlus"
-        @click="selectVisible = true"
-      />
+    <ElFormItem prop="row" label="row" v-if="['request', 'response'].includes(addForm.type)">
+      <ElInput :model-value="(addForm.sheetName || currentTab) + '/' + addForm.row || ''" readonly
+        :suffix-icon="CirclePlus" @click="selectVisible = true" />
     </ElFormItem>
-    <ElFormItem
-      prop="valuePath"
-      label="valuePath"
-      v-if="['request', 'response'].includes(addForm.type)"
-    >
+    <ElFormItem prop="valuePath" label="valuePath" v-if="['request', 'response'].includes(addForm.type)">
       <ElInput v-model="addForm.valuePath" />
     </ElFormItem>
-    <ElFormItem
-      prop="listSearch"
-      label="listSearch"
-      v-if="['request', 'response'].includes(addForm.type)"
-    >
+    <ElFormItem prop="listSearch" label="listSearch" v-if="['request', 'response'].includes(addForm.type)">
       <JsonEditor v-model="addForm.listSearch" :lines="4" />
     </ElFormItem>
     <ElFormItem prop="prefix" label="prefix" v-if="addForm.type === 'now'">
@@ -44,6 +23,9 @@
     </ElFormItem>
     <ElFormItem prop="suffix" label="suffix" v-if="addForm.type === 'now'">
       <ElInput v-model="addForm.suffix" />
+    </ElFormItem>
+    <ElFormItem prop="timeFmt" label="timeFmt" v-if="addForm.type === 'now'">
+      <ElInput v-model="addForm.timeFmt" />
     </ElFormItem>
   </ElForm>
   <CustomDialog v-model="selectVisible" title="添加" :onConfirm="onAddConfirm">
@@ -69,8 +51,6 @@ const props = withDefaults(defineProps<Props>(), {
     valuePath: '',
     row: 0,
     rowId: '',
-    suffix: '',
-    prefix: '',
     listSearch: '',
   }),
 });
@@ -110,13 +90,19 @@ const rules = computed<FormRules>(() => ({
 }));
 
 const onTypeChange = () => {
+  delete addForm.prefix;
+  delete addForm.suffix;
+  delete addForm.sheetName;
+  delete addForm.timeFmt;
   addForm.path = '';
   addForm.valuePath = '';
   addForm.row = 0;
   addForm.rowId = '';
-  addForm.suffix = '';
-  addForm.prefix = '';
-  addForm.listSearch = '[]';
+  if (addForm.type === 'now') {
+  delete addForm.listSearch;
+  } else {
+    addForm.listSearch = '[]';
+  }
 };
 
 const onRowSelect = (selectData: ApiTestExcel, tabName: string) => {
@@ -131,13 +117,21 @@ const selectRef = ref<InstanceType<typeof SelectApiTestRow>>();
 const onSubmit = () => {
   return new Promise((resolve, reject) => {
     formRef.value?.validate((falg: boolean) => {
-    if (falg) {
-      emits('success', toRaw(addForm));
-      resolve(true);
-    } else {
-      reject();
-    }
-  })
+      if (falg) {
+        const addFormData: ApiTestRequestDataFormat = toRaw(addForm);
+        (Object.keys(addFormData) as (keyof ApiTestRequestDataFormat)[]).forEach(key => {
+          if (!(addFormData[key])) {
+            delete addFormData[key];
+          }
+        })
+        console.log(addFormData);
+        
+        emits('success', addFormData);
+        resolve(true);
+      } else {
+        reject();
+      }
+    })
   });
 };
 const onAddConfirm = () => {

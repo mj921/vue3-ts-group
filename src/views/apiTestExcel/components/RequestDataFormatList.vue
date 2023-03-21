@@ -5,11 +5,12 @@
   <ElTable :data="list">
     <ElTableColumn label="type" prop="type" :min-width="80" fixed="left"></ElTableColumn>
     <ElTableColumn label="path" prop="path" :min-width="100" fixed="left"></ElTableColumn>
-    <ElTableColumn label="sheetName" prop="row" :min-width="100"></ElTableColumn>
+    <ElTableColumn label="sheetName" prop="sheetName" :min-width="100"></ElTableColumn>
     <ElTableColumn label="row" prop="row" :min-width="50"></ElTableColumn>
     <ElTableColumn label="valuePath" prop="valuePath" :min-width="100"></ElTableColumn>
     <ElTableColumn label="prefix" prop="prefix" :min-width="120"></ElTableColumn>
     <ElTableColumn label="suffix" prop="suffix" :min-width="120"></ElTableColumn>
+    <ElTableColumn label="timeFmt" prop="timeFmt" :min-width="120"></ElTableColumn>
     <ElTableColumn label="listSearch" prop="listSearch" :min-width="100"></ElTableColumn>
     <ElTableColumn label="操作" fixed="right" :min-width="80">
       <template v-slot="{ row, $index }">
