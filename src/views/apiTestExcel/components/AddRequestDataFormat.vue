@@ -15,8 +15,16 @@
     <ElFormItem prop="valuePath" label="valuePath" v-if="['request', 'response'].includes(addForm.type)">
       <ElInput v-model="addForm.valuePath" />
     </ElFormItem>
+    <ElFormItem prop="value" label="value" v-if="['text'].includes(addForm.type)">
+      <ElInput v-model="addForm.value" />
+    </ElFormItem>
     <ElFormItem prop="listSearch" label="listSearch" v-if="['request', 'response'].includes(addForm.type)">
       <JsonEditor v-model="addForm.listSearch" :lines="4" />
+    </ElFormItem>
+    <ElFormItem prop="assignType" label="assignType" v-if="['request', 'response', 'text'].includes(addForm.type)">
+      <ElSelect v-model="addForm.assignType" clearable>
+        <ElOption value="add"></ElOption>
+      </ElSelect>
     </ElFormItem>
     <ElFormItem prop="prefix" label="prefix" v-if="addForm.type === 'now'">
       <ElInput v-model="addForm.prefix" />
@@ -62,7 +70,7 @@ const emits = defineEmits<Emits>();
 const currentTab = inject('currentTab');
 
 const addForm = reactive<ApiTestRequestDataFormat>(props.detail);
-const typeList = ['response', 'request', 'now'];
+const typeList = ['response', 'request', 'now', 'text'];
 
 const selectVisible = ref(false);
 
@@ -94,12 +102,13 @@ const onTypeChange = () => {
   delete addForm.suffix;
   delete addForm.sheetName;
   delete addForm.timeFmt;
+  delete addForm.valuePath;
+  delete addForm.value;
+  delete addForm.rowId;
   addForm.path = '';
-  addForm.valuePath = '';
   addForm.row = 0;
-  addForm.rowId = '';
-  if (addForm.type === 'now') {
-  delete addForm.listSearch;
+  if (['now', 'text'].includes(addForm.type)) {
+    delete addForm.listSearch;
   } else {
     addForm.listSearch = '[]';
   }
@@ -125,7 +134,7 @@ const onSubmit = () => {
           }
         })
         console.log(addFormData);
-        
+
         emits('success', addFormData);
         resolve(true);
       } else {

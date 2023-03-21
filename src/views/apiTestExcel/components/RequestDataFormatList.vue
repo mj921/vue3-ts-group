@@ -12,6 +12,7 @@
     <ElTableColumn label="suffix" prop="suffix" :min-width="120"></ElTableColumn>
     <ElTableColumn label="timeFmt" prop="timeFmt" :min-width="120"></ElTableColumn>
     <ElTableColumn label="listSearch" prop="listSearch" :min-width="100"></ElTableColumn>
+    <ElTableColumn label="assignType" prop="assignType" :min-width="80"></ElTableColumn>
     <ElTableColumn label="操作" fixed="right" :min-width="80">
       <template v-slot="{ row, $index }">
         <div class="operation-btns">

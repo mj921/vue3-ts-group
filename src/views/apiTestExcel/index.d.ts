@@ -79,15 +79,17 @@ export declare type ApiTestSql = {
 };
 export declare type ApiTestRequestDataFormat = {
   path: string;
-  rowId: string;
-  row: number;
-  valuePath: string;
+  rowId?: string;
+  row?: number;
+  valuePath?: string;
+  value?: string;
   type: 'request' | 'response' | 'now';
   listSearch?: string;
   prefix?: string;
   suffix?: string;
   sheetName?: string;
   timeFmt?: string;
+  assignType?: 'add'
 };
 export declare type ApiTestGlobalHeaderFormat = {
   path: string;
