@@ -257,6 +257,7 @@ const onSave = (saveData: AddApiTestExcel) => {
       zmip,
     });
   }
+  sessionStorage.setItem('tabList', tabList?.value ? JSON.stringify(tabList.value) : '');
 };
 
 const addRef = ref<InstanceType<typeof AddApiTestRow>>();

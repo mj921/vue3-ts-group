@@ -7,6 +7,7 @@
           <ElButton type="primary">导入</ElButton>
         </template>
       </ElUpload>
+      <ElButton type="primary" @click="clear">清空</ElButton>
     </div>
     <ElTabs v-model="tabName" type="card" editable @edit="onTabsEdit">
       <ElTabPane v-for="pane in tabList" :label="pane.name" :name="pane.name">
@@ -24,14 +25,37 @@ import { getId } from '../../utils';
 import { ElMessage, ElMessageBox, TabPaneName } from 'element-plus';
 import 'element-plus/es/components/message-box/style/css';
 
-const tabList = ref<ApiTestExcelPane[]>([
+const storeTabListStr = sessionStorage.getItem('tabList');
+let storeTabList = [
   {
     name: 'sheet',
     dataList: [],
   },
-]);
+]
+if (storeTabListStr) {
+  try {
+    const tempList = JSON.parse(storeTabListStr);
+    if (tempList.length > 0) {
+      storeTabList = tempList;
+    }
+  } catch (error) {
 
-const tabName = ref('sheet');
+  }
+}
+const tabList = ref<ApiTestExcelPane[]>(storeTabList);
+
+const tabName = ref(storeTabList[0].name);
+
+const clear = () => {
+  tabList.value = [
+    {
+      name: 'sheet',
+      dataList: [],
+    },
+  ];
+  tabName.value = 'sheet';
+  sessionStorage.removeItem('tabList')
+}
 
 const keyList: (keyof ApiTestExcel)[] = [
   'id',
