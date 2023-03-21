@@ -28,6 +28,8 @@
       </ElTableColumn>
       <ElTableColumn prop="globalHeaders" label="globalHeaders" :width="160">
       </ElTableColumn>
+      <ElTableColumn prop="zmip" label="zmip" :width="60">
+      </ElTableColumn>
       <ElTableColumn label="操作" :width="200" fixed="right">
         <template v-slot="{ row, $index }">
           <div class="operation-btns">
@@ -56,7 +58,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { inject, provide, Ref, ref, toRef, watch } from 'vue';
 import { AddApiTestExcel, ApiTestExcel, ApiTestExcelPane, ApiTestRequestDataFormat } from '..';
 import { getId } from '../../../utils';
@@ -83,9 +85,11 @@ const rowStyle = ({ row }: { row: ApiTestExcel }) => {
   if (!row.RequestDataFormat) return {}
   try {
     const temp = JSON.parse(row.RequestDataFormat);
-    const index = temp.findIndex((item: ApiTestRequestDataFormat) =>
-      typeof item.row !== 'undefined' && props.dataList.findIndex(val => val._id === item.rowId) === -1
-    )
+    const index = temp.findIndex((item: ApiTestRequestDataFormat) => {
+      const sheetName = item.sheetName ?? props.currentTab;
+      const pane = tabList?.value.find(el => el.name === sheetName);
+      return typeof item.row !== 'undefined' && pane && pane.dataList.findIndex(val => val._id === item.rowId) === -1
+    });
     if (index > -1) {
       return {
         color: 'red'
@@ -119,7 +123,6 @@ const edit = (row: ApiTestExcel) => {
 const tabList = inject<Ref<ApiTestExcelPane[]>>('tabList');
 
 const calcRow = () => {
-  console.log();
   tabList?.value.forEach((pane) => {
     pane.dataList.forEach((el, index) => {
       if (pane.name === props.currentTab) {
@@ -169,7 +172,6 @@ const swrap = (index: number, type: 'up' | 'down' | 'top' | 'bottom') => {
 const copyVisible = ref(false);
 const copySheet = ref(props.currentTab);
 watch(() => props.currentTab, () => {
-  console.log(props.currentTab)
   copySheet.value = props.currentTab;
 })
 const copy = (row: ApiTestExcel) => {
@@ -213,6 +215,7 @@ const onSave = (saveData: AddApiTestExcel) => {
     RequestDataFormat,
     headers,
     globalHeaders,
+    zmip,
   } = saveData;
   const dataStr = data ? JSON.stringify(JSON.parse(data)) : '{}';
   const FormDataStr = FormData ? JSON.stringify(JSON.parse(FormData)) : '{}';
@@ -230,6 +233,8 @@ const onSave = (saveData: AddApiTestExcel) => {
     modifyData.delay = delay;
     modifyData.headers = headersStr;
     modifyData.globalHeaders = JSON.stringify(globalHeaders);
+    modifyData.zmip = zmip
+  } else {
     props.dataList.push({
       _id,
       id: props.dataList.length + 1,
@@ -249,6 +254,7 @@ const onSave = (saveData: AddApiTestExcel) => {
       delay,
       headers: headersStr,
       globalHeaders: JSON.stringify(globalHeaders),
+      zmip,
     });
   }
 };

@@ -35,13 +35,20 @@
       </JsonEditor>
     </ElFormItem>
     <ElFormItem prop="delay" label="delay">
-      <ElInput v-model.number="addForm.delay" />
+      <ElSelect v-model.number="addForm.delay">
+        <ElOption value="y"></ElOption>
+      </ElSelect>
     </ElFormItem>
     <ElFormItem prop="headers" label="headers">
       <JsonEditor v-model="addForm.headers" />
     </ElFormItem>
     <ElFormItem prop="globalHeaders" label="globalHeaders">
       <GlobalHeaderList v-model="addForm.globalHeaders" />
+    </ElFormItem>
+    <ElFormItem prop="zmip" label="zmip">
+      <ElSelect v-model.number="addForm.zmip">
+        <ElOption label="y" value="y" />
+      </ElSelect>
     </ElFormItem>
   </ElForm>
   <CustomDialog v-model="actualDataVisible" title="添加" :onConfirm="onAddConfirm">
@@ -82,9 +89,10 @@ const addForm = reactive<AddApiTestExcel>(
     FormData: '{}',
     RequestDataFormat: [],
     ActualDataFormat: '',
-    delay: 0,
+    delay: '',
     headers: '{}',
     globalHeaders: [],
+    zmip: '',
   }
 );
 const methodList = [

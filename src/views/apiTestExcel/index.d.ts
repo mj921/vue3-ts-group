@@ -35,9 +35,10 @@ export declare type ApiTestExcel = {
   FormData: string;
   RequestDataFormat: string;
   ActualDataFormat: string;
-  delay: number;
+  delay: string;
   headers: string;
   globalHeaders: string;
+  zmip: string;
 };
 
 export declare type AddApiTestExcel = {

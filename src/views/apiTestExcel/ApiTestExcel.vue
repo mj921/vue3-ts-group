@@ -10,7 +10,7 @@
     </div>
     <ElTabs v-model="tabName" type="card" editable @edit="onTabsEdit">
       <ElTabPane v-for="pane in tabList" :label="pane.name" :name="pane.name">
-        <ApiTestList :dataList="pane.dataList" :tabList="tabList" :currentTab="pane.name" />
+        <ApiTestList v-if="tabName === pane.name" :dataList="pane.dataList" :tabList="tabList" :currentTab="pane.name" />
       </ElTabPane>
     </ElTabs>
   </div>
@@ -49,7 +49,9 @@ const keyList: (keyof ApiTestExcel)[] = [
   'RequestDataFormat',
   'ActualDataFormat',
   'delay',
+  'headers',
   'globalHeaders',
+  'zmip',
 ];
 const colKeyMap = keyList.reduce<{ [key in keyof ApiTestExcel]?: string }>(
   (o, el, i) => {
@@ -99,22 +101,14 @@ const beforeUpload = (file: any) => {
           try {
             const temp = JSON.parse(el.RequestDataFormat);
             temp.forEach((item: ApiTestRequestDataFormat) => {
-              if (typeof item.row !== 'undefined') {
-                item.rowId = data[item.row - 1]._id;
+              const tempSheetName = item.sheetName ?? sheetname;
+              const pane = list.find(el => el.name === tempSheetName);
+              const dataList = pane?.dataList ?? data;
+              if (typeof item.row !== 'undefined' && dataList?.length) {
+                item.rowId = dataList[item.row - 1]._id;
               }
             });
             el.RequestDataFormat = JSON.stringify(temp);
-          } catch (error) { }
-        }
-        if (el.globalHeaders) {
-          try {
-            const temp = JSON.parse(el.globalHeaders);
-            temp.forEach((item: ApiTestRequestDataFormat) => {
-              if (typeof item.row !== 'undefined') {
-                item.rowId = data[item.row - 1]._id;
-              }
-            });
-            el.globalHeaders = JSON.stringify(temp);
           } catch (error) { }
         }
       });
@@ -140,17 +134,24 @@ const exportData = () => {
         o[`${colKeyMap[key]}1`] = { v: key, w: key, h: key, t: 's' };
         return o;
       }, {});
-      sheet['!ref'] = `A1:O${tab.dataList.length + 2}`;
+      sheet['!ref'] = `A1:${String.fromCharCode(65 + keyList.length - 1)}${tab.dataList.length + 2}`;
       sheets[tab.name] = tab.dataList.reduce(
         (o: { [key: string]: any }, el, i) => {
           keyList.forEach((key) => {
+            let val = el[key];
+            if (['RequestDataFormat', 'globalHeaders'].includes(key) && val === '[]') {
+              val = '';
+            }
+            if (['headers'].includes(key) && val === '{}') {
+              val = '';
+            }
             const temp: { [key: string]: any } = {
-              v: el[key],
-              w: el[key],
-              t: typeof el[key] === 'number' ? 'n' : 's',
+              v: val,
+              w: val,
+              t: typeof val === 'number' ? 'n' : 's',
             };
-            if (typeof el[key] !== 'number') {
-              temp.h = el[key];
+            if (typeof val !== 'number') {
+              temp.h = val;
             }
             o[`${colKeyMap[key]}${i + 2}`] = temp;
           });
