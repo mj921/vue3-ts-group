@@ -89,7 +89,8 @@ export declare type ApiTestRequestDataFormat = {
   suffix?: string;
   sheetName?: string;
   timeFmt?: string;
-  assignType?: 'add'
+  assignType?: 'add';
+  addTime?: number;
 };
 export declare type ApiTestGlobalHeaderFormat = {
   path: string;

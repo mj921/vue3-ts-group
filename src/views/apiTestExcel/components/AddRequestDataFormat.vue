@@ -35,6 +35,9 @@
     <ElFormItem prop="timeFmt" label="timeFmt" v-if="addForm.type === 'now'">
       <ElInput v-model="addForm.timeFmt" />
     </ElFormItem>
+    <ElFormItem prop="addTime" label="addTime" v-if="addForm.type === 'now'">
+      <ElInput type="number" v-model.number="addForm.addTime" />
+    </ElFormItem>
   </ElForm>
   <CustomDialog v-model="selectVisible" title="添加" :onConfirm="onAddConfirm">
     <SelectApiTestRow v-model="addForm.rowId" ref="selectRef" @select="onRowSelect" />
@@ -105,6 +108,7 @@ const onTypeChange = () => {
   delete addForm.valuePath;
   delete addForm.value;
   delete addForm.rowId;
+  delete addForm.addTime;
   addForm.path = '';
   addForm.row = 0;
   if (['now', 'text'].includes(addForm.type)) {
