@@ -59,7 +59,7 @@
 import { FormInstance, FormRules } from 'element-plus';
 import { reactive, ref, toRaw } from 'vue';
 import { AddApiTestExcel, ApiTestActualDataFormat } from '../../../types';
-import { getId } from '../../../utils';
+import { generateUuid } from '../../../utils';
 import CustomDialog from './CustomDialog.vue';
 import ActualDataFormatForm from './ActualDataFormatForm.vue'
 import GlobalHeaderList from './GlobalHeaderList.vue';
@@ -79,7 +79,7 @@ const emits = defineEmits<Emits>();
 
 const addForm = reactive<AddApiTestExcel>(
   props.detail || {
-    _id: getId(),
+    _id: generateUuid(),
     method: 'get',
     module: '',
     url: '',

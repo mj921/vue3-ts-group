@@ -61,7 +61,7 @@
 import { ElMessageBox } from 'element-plus';
 import { inject, provide, Ref, ref, toRef, watch } from 'vue';
 import { AddApiTestExcel, ApiTestExcel, ApiTestExcelPane, ApiTestRequestDataFormat } from '../../../types';
-import { getId } from '../../../utils';
+import { generateUuid } from '../../../utils';
 import AddApiTestRow from './AddApiTestRow.vue';
 import CustomDialog from './CustomDialog.vue';
 
@@ -181,7 +181,7 @@ const copy = (row: ApiTestExcel) => {
 const onCopy = () => {
   const index = props.tabList.findIndex(({ name }) => name === copySheet.value);
   if (index > -1) {
-    props.tabList[index].dataList.push({ ...copyData.value, _id: getId(), id: props.tabList[index].dataList.length + 1 } as ApiTestExcel)
+    props.tabList[index].dataList.push({ ...copyData.value, _id: generateUuid(), id: props.tabList[index].dataList.length + 1 } as ApiTestExcel)
   }
   copySheet.value = props.currentTab;
   copyData.value = undefined;

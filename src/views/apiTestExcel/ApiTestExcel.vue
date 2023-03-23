@@ -26,12 +26,12 @@ import { provide, ref } from 'vue';
 import { ApiTestExcel, ApiTestExcelPane, ApiTestRequestDataFormat } from '../../types';
 import * as XLSX from 'xlsx';
 import ApiTestList from './components/ApiTestList.vue';
-import { getId, pyDateFmt } from '../../utils';
 import { ElMessage, ElMessageBox, TabPaneName } from 'element-plus';
 import 'element-plus/es/components/message-box/style/css';
 import { testInterface } from '../../utils/executeTest';
 import CustomDialog from './components/CustomDialog.vue';
 import Config from './components/Config.vue';
+import { generateUuid } from '../../utils';
 
 const storeTabListStr = sessionStorage.getItem('tabList');
 let storeTabList = [
@@ -83,7 +83,7 @@ const configConfirm = () => {
 }
 const testData = () => {
   const runSheetTabs = runSheets.value.map(el => tabList.value.find(item => item.name === el) as ApiTestExcelPane | undefined)
-  testInterface(runSheetTabs.filter(el => el) as ApiTestExcelPane[]);
+  testInterface(runSheets.value.length ? runSheetTabs.filter(el => el) as ApiTestExcelPane[] : tabList.value);
 }
 
 const keyList: (keyof ApiTestExcel)[] = [
@@ -146,7 +146,7 @@ const beforeUpload = (file: any) => {
             o[key] = o[key].replace(/'/g, '"');
           }
         });
-        o._id = getId();
+        o._id = generateUuid();
         data.push(o as ApiTestExcel);
       }
       data.forEach((el) => {

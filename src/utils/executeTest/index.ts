@@ -1,11 +1,9 @@
 import { getValueByPath, pyDateFmt } from '..';
 import {
-  ApiTestExcel,
   ApiTestExcelPane,
   ApiTestExcelPaneResult,
   ApiTestExcelResult,
   ApiTestGlobalHeaderFormat,
-  ApiTestRequestDataFormat,
   ApiTestRequestDataFormatResult,
 } from '../../types';
 import Logger from './logger';
