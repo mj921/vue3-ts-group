@@ -55,6 +55,54 @@ export const dateFmt = (
   );
 };
 
+export const pyDateFmt = (
+  fmt = '%Y-%m-%d',
+  date: Date | string | number = new Date()
+) => {
+  const originVal = date;
+  if (typeof date === 'string' && /^\d+$/.test(date)) {
+    date = +date;
+  }
+  if (typeof date === 'number' && date <= 9999999999) {
+    date *= 1000;
+  }
+  date = new Date(date);
+  if (date.toString() === 'Invalid Date') {
+    return originVal.toString();
+  }
+  const y = date.getFullYear();
+  const M = date.getMonth() + 1;
+  const d = date.getDate();
+  const h = date.getHours();
+  const m = date.getMinutes();
+  const s = date.getSeconds();
+  const S = date.getMilliseconds();
+  const w = date.getDay();
+  const weeks = ['日', '一', '二', '三', '四', '五', '六'];
+  const map = {
+    '%Y': y,
+    '%y': y.toString().slice(2),
+    '%m': addZero(M),
+    M,
+    '%d': addZero(d),
+    d,
+    '%H': addZero(h),
+    h,
+    '%I': addZero(h % 12),
+    H: h % 12,
+    '%M': addZero(m),
+    m,
+    '%S': addZero(s),
+    s,
+    S,
+    '%w': `星期${weeks[w]}`,
+  };
+  const reg = new RegExp(`(${Object.keys(map).join('|')})`, 'g');
+  return fmt.replace(reg, (match: string, $: keyof typeof map) =>
+    map[$].toString()
+  );
+};
+
 export const hexColorToRgb = (color: string) => {
   if (/^#?([\da-fA-F]{3}){1,2}$/.test(color)) {
     if (color[0] === '#') {

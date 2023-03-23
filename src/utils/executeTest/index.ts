@@ -1,4 +1,4 @@
-import { dateFmt, getValueByPath } from '..';
+import { getValueByPath, pyDateFmt } from '..';
 import {
   ApiTestExcel,
   ApiTestExcelPane,
@@ -44,7 +44,7 @@ const parseRequestDataFormat = (
           now += rdf.addTime * 1000;
         }
         if (rdf.timeFmt) {
-          value = dateFmt(rdf.timeFmt, new Date(now));
+          value = pyDateFmt(rdf.timeFmt, new Date(now));
         } else {
           value = now.toString();
         }

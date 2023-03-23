@@ -26,7 +26,7 @@ import { provide, ref } from 'vue';
 import { ApiTestExcel, ApiTestExcelPane, ApiTestRequestDataFormat } from '../../types';
 import * as XLSX from 'xlsx';
 import ApiTestList from './components/ApiTestList.vue';
-import { getId } from '../../utils';
+import { getId, pyDateFmt } from '../../utils';
 import { ElMessage, ElMessageBox, TabPaneName } from 'element-plus';
 import 'element-plus/es/components/message-box/style/css';
 import { testInterface } from '../../utils/executeTest';
