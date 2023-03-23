@@ -21,7 +21,7 @@
 <script lang="ts" setup>
 import { ElRadioGroup } from 'element-plus';
 import { inject, ref, watch } from 'vue';
-import { ApiTestExcel, ApiTestExcelPane } from '..';
+import { ApiTestExcel, ApiTestExcelPane } from '../../../types';
 
 type Props = {
   modelValue: string;

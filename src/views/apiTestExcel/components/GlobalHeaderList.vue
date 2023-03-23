@@ -20,7 +20,7 @@
 </template>
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { ApiTestGlobalHeaderFormat } from '..';
+import { ApiTestGlobalHeaderFormat } from '../../../types';
 import CustomDialog from './CustomDialog.vue';
 import AddRequestDataFormat from './AddRequestDataFormat.vue';
 import AddGlobalHeader from './AddGlobalHeader.vue';

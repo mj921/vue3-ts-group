@@ -58,7 +58,7 @@
 <script lang="ts" setup>
 import { FormInstance, FormRules } from 'element-plus';
 import { reactive, ref, toRaw } from 'vue';
-import { AddApiTestExcel, ApiTestActualDataFormat } from '..';
+import { AddApiTestExcel, ApiTestActualDataFormat } from '../../../types';
 import { getId } from '../../../utils';
 import CustomDialog from './CustomDialog.vue';
 import ActualDataFormatForm from './ActualDataFormatForm.vue'

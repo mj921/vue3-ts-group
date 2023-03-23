@@ -60,7 +60,7 @@
 <script lang="ts" setup>
 import { ElMessageBox } from 'element-plus';
 import { inject, provide, Ref, ref, toRef, watch } from 'vue';
-import { AddApiTestExcel, ApiTestExcel, ApiTestExcelPane, ApiTestRequestDataFormat } from '..';
+import { AddApiTestExcel, ApiTestExcel, ApiTestExcelPane, ApiTestRequestDataFormat } from '../../../types';
 import { getId } from '../../../utils';
 import AddApiTestRow from './AddApiTestRow.vue';
 import CustomDialog from './CustomDialog.vue';

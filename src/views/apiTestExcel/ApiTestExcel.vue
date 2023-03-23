@@ -8,22 +8,30 @@
         </template>
       </ElUpload>
       <ElButton type="primary" @click="clear">清空</ElButton>
+      <ElButton type="primary" @click="testData">测试</ElButton>
+      <ElButton type="primary" @click="configVisible = true">配置</ElButton>
     </div>
     <ElTabs v-model="tabName" type="card" editable @edit="onTabsEdit">
       <ElTabPane v-for="pane in tabList" :label="pane.name" :name="pane.name">
         <ApiTestList v-if="tabName === pane.name" :dataList="pane.dataList" :tabList="tabList" :currentTab="pane.name" />
       </ElTabPane>
     </ElTabs>
+    <CustomDialog title="配置" v-model="configVisible" :onConfirm="configConfirm">
+      <Config v-if="configVisible" ref="configRef" :runSheets="runSheets" @updateSheet="updateSheet" />
+    </CustomDialog>
   </div>
 </template>
 <script lang="ts" setup>
 import { provide, ref } from 'vue';
-import { ApiTestExcel, ApiTestExcelPane, ApiTestRequestDataFormat } from '.';
+import { ApiTestExcel, ApiTestExcelPane, ApiTestRequestDataFormat } from '../../types';
 import * as XLSX from 'xlsx';
 import ApiTestList from './components/ApiTestList.vue';
 import { getId } from '../../utils';
 import { ElMessage, ElMessageBox, TabPaneName } from 'element-plus';
 import 'element-plus/es/components/message-box/style/css';
+import { testInterface } from '../../utils/executeTest';
+import CustomDialog from './components/CustomDialog.vue';
+import Config from './components/Config.vue';
 
 const storeTabListStr = sessionStorage.getItem('tabList');
 let storeTabList = [
@@ -43,6 +51,17 @@ if (storeTabListStr) {
   }
 }
 const tabList = ref<ApiTestExcelPane[]>(storeTabList);
+const runSheetStr = sessionStorage.getItem('api_test_interface_runSheets') || '[]';
+let _runSheets: string[] = [];
+if (runSheetStr) {
+  try {
+    _runSheets = JSON.parse(runSheetStr)
+  } catch (error) { }
+}
+const runSheets = ref<string[]>(_runSheets);
+const updateSheet = (val: string[]) => {
+  runSheets.value = val;
+}
 
 const tabName = ref(storeTabList[0].name);
 
@@ -55,6 +74,16 @@ const clear = () => {
   ];
   tabName.value = 'sheet';
   sessionStorage.removeItem('tabList')
+}
+const configVisible = ref(false);
+const configRef = ref<InstanceType<typeof Config>>();
+const configConfirm = () => {
+  configRef.value?.onSubmit();
+  return Promise.resolve();
+}
+const testData = () => {
+  const runSheetTabs = runSheets.value.map(el => tabList.value.find(item => item.name === el) as ApiTestExcelPane | undefined)
+  testInterface(runSheetTabs.filter(el => el) as ApiTestExcelPane[]);
 }
 
 const keyList: (keyof ApiTestExcel)[] = [
@@ -220,6 +249,7 @@ const onTabsEdit = (targetName: TabPaneName | undefined, action: 'remove' | 'add
       type: 'warning',
     }).then(() => {
       tabList.value = tabList.value.filter((tab) => tab.name !== targetName);
+      runSheets.value = runSheets.value.filter(el => el !== targetName);
     }).catch(() => { });
   }
 };

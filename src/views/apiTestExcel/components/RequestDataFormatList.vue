@@ -28,7 +28,7 @@
 </template>
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { ApiTestRequestDataFormat } from '..';
+import { ApiTestRequestDataFormat } from '../../../types';
 import CustomDialog from './CustomDialog.vue';
 import AddRequestDataFormat from './AddRequestDataFormat.vue';
 

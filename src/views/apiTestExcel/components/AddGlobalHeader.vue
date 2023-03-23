@@ -16,7 +16,7 @@
 <script lang="ts" setup>
 import { FormInstance, FormRules } from 'element-plus';
 import { computed, reactive, ref, toRaw } from 'vue';
-import { ApiTestGlobalHeaderFormat } from '..';
+import { ApiTestGlobalHeaderFormat } from '../../../types';
 
 type Props = {
   detail?: ApiTestGlobalHeaderFormat;

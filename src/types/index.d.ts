@@ -2,6 +2,28 @@ export declare type ApiTestExcelPane = {
   name: string;
   dataList: ApiTestExcel[];
 };
+export declare type ApiTestExcelPaneResult = {
+  name: string;
+  dataList: ApiTestExcelResult[];
+};
+
+export declare type ApiTestExcelResult = {
+  [key in keyof ApiTestExcel as Exclude<
+    key,
+    | 'data'
+    | 'RequestDataFormat'
+    | 'headers'
+    | 'globalHeaders'
+    | 'ActualDataFormat'
+  >]: ApiTestExcel[key];
+} & {
+  interfaceResponse?: Object;
+  data: Object;
+  RequestDataFormat?: ApiTestRequestDataFormatResult[];
+  headers?: { [key: string]: string };
+  globalHeaders?: ApiTestGlobalHeaderFormat[];
+  ActualDataFormat?: { path: string };
+};
 
 export declare type ApiTestExcel = {
   _id: string;
@@ -28,7 +50,7 @@ export declare type ApiTestExcel = {
   data: string;
   sql: string;
   Expected_code: string;
-  Actual_code: string;
+  Actual_code: string | number;
   sql_result: 'pass' | 'fail' | '';
   Result: 'pass' | 'fail' | '';
   Reason: string;
@@ -83,7 +105,7 @@ export declare type ApiTestRequestDataFormat = {
   row?: number;
   valuePath?: string;
   value?: string;
-  type: 'request' | 'response' | 'now';
+  type: 'request' | 'response' | 'now' | 'text';
   listSearch?: string;
   prefix?: string;
   suffix?: string;
@@ -91,6 +113,16 @@ export declare type ApiTestRequestDataFormat = {
   timeFmt?: string;
   assignType?: 'add';
   addTime?: number;
+  jsonpath?: string;
+};
+
+export declare type ApiTestRequestDataFormatResult = {
+  [key in keyof ApiTestRequestDataFormat as Exclude<
+    key,
+    'listSearch'
+  >]: ApiTestRequestDataFormat[key];
+} & {
+  listSearch?: string[];
 };
 export declare type ApiTestGlobalHeaderFormat = {
   path: string;
@@ -101,3 +133,5 @@ export declare type ApiTestActualDataFormat = {
   path: string;
 };
 export declare type ApiTestHeaders = {};
+
+export declare type ApiTextConfig = { ip: string; zmip: string };

@@ -8,6 +8,9 @@
     <ElFormItem prop="path" label="path">
       <ElInput v-model="addForm.path" />
     </ElFormItem>
+    <ElFormItem prop="jsonpath" label="jsonpath">
+      <ElInput v-model="addForm.jsonpath" />
+    </ElFormItem>
     <ElFormItem prop="row" label="row" v-if="['request', 'response'].includes(addForm.type)">
       <ElInput :model-value="(addForm.sheetName || currentTab) + '/' + addForm.row || ''" readonly
         :suffix-icon="CirclePlus" @click="selectVisible = true" />
@@ -46,7 +49,7 @@
 <script lang="ts" setup>
 import { FormInstance, FormRules } from 'element-plus';
 import { computed, inject, reactive, ref, toRaw } from 'vue';
-import { ApiTestRequestDataFormat, ApiTestExcel } from '..';
+import { ApiTestRequestDataFormat, ApiTestExcel } from '../../../types';
 import JsonEditor from './JsonEditor.vue';
 import CustomDialog from './CustomDialog.vue';
 import SelectApiTestRow from './SelectApiTestRow.vue';
@@ -109,6 +112,7 @@ const onTypeChange = () => {
   delete addForm.value;
   delete addForm.rowId;
   delete addForm.addTime;
+  delete addForm.jsonpath;
   addForm.path = '';
   addForm.row = 0;
   if (['now', 'text'].includes(addForm.type)) {

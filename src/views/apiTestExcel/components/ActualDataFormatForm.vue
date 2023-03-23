@@ -8,7 +8,7 @@
 <script lang="ts" setup>
 import { FormInstance, FormRules } from 'element-plus';
 import { computed, reactive, ref, toRaw } from 'vue';
-import { ApiTestActualDataFormat } from '..';
+import { ApiTestActualDataFormat } from '../../../types';
 
 type Props = {
   detail?: ApiTestActualDataFormat;
