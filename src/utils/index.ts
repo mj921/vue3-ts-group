@@ -140,7 +140,7 @@ export const getValueByPath = (
 ) => {
   let value = obj;
   const pathList = path.split('.');
-  while (typeof value === 'object' && pathList.length > shengyu) {
+  while (typeof value === 'object' && value && pathList.length > shengyu) {
     const key = pathList.shift() || '';
     if (Array.isArray(value)) {
       if (value.length <= +key) return null;

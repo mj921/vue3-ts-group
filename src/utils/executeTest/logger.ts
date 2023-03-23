@@ -34,10 +34,10 @@ export default class Logger {
     }
     let content: any[] = [];
     if (color) {
-      content = [`[${dateFmt('yyyy-MM-dd HH:mm:ss')}_log]:`, ...color];
+      content = [`[${dateFmt('yyyy-MM-dd hh:mm:ss')}_log]:`, ...color];
     } else {
       content = [
-        `%c[${dateFmt('yyyy-MM-dd HH:mm:ss')}_${Logger.LEVEL_NAME[level]}]:`,
+        `%c[${dateFmt('yyyy-MM-dd hh:mm:ss')}_${Logger.LEVEL_NAME[level]}]:`,
         'color:' + Logger.LEVEL_COLOR[level],
       ];
     }
