@@ -7,7 +7,7 @@ import IconsResolver from 'unplugin-icons/resolver';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/vue3-ts-group',
+  base: '/vue3-ts-group/',
   plugins: [
     vue(),
     AutoImport({

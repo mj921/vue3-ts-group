@@ -18,6 +18,9 @@
     <ElFormItem prop="valuePath" label="valuePath" v-if="['request', 'response'].includes(addForm.type)">
       <ElInput v-model="addForm.valuePath" />
     </ElFormItem>
+    <ElFormItem prop="valueJsonpath" label="valueJsonpath" v-if="['request', 'response'].includes(addForm.type)">
+      <ElInput v-model="addForm.valueJsonpath" />
+    </ElFormItem>
     <ElFormItem prop="value" label="value" v-if="['text'].includes(addForm.type)">
       <ElInput v-model="addForm.value" />
     </ElFormItem>
@@ -113,6 +116,7 @@ const onTypeChange = () => {
   delete addForm.rowId;
   delete addForm.addTime;
   delete addForm.jsonpath;
+  delete addForm.valueJsonpath;
   addForm.path = '';
   addForm.row = 0;
   if (['now', 'text'].includes(addForm.type)) {

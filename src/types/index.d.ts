@@ -114,6 +114,7 @@ export declare type ApiTestRequestDataFormat = {
   assignType?: 'add';
   addTime?: number;
   jsonpath?: string;
+  valueJsonpath?: string;
 };
 
 export declare type ApiTestRequestDataFormatResult = {
