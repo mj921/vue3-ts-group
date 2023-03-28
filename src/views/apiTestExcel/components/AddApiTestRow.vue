@@ -35,9 +35,7 @@
       </JsonEditor>
     </ElFormItem>
     <ElFormItem prop="delay" label="delay">
-      <ElSelect v-model.number="addForm.delay" clearable>
-        <ElOption value="y"></ElOption>
-      </ElSelect>
+      <ElInput v-model="addForm.delay" clearable />
     </ElFormItem>
     <ElFormItem prop="headers" label="headers">
       <JsonEditor v-model="addForm.headers" />
@@ -46,7 +44,7 @@
       <GlobalHeaderList v-model="addForm.globalHeaders" />
     </ElFormItem>
     <ElFormItem prop="zmip" label="zmip">
-      <ElSelect v-model.number="addForm.zmip" clearable>
+      <ElSelect v-model="addForm.zmip" clearable>
         <ElOption label="y" value="y" />
       </ElSelect>
     </ElFormItem>
