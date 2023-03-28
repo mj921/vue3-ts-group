@@ -3,6 +3,9 @@
     <ElFormItem prop="path" label="path">
       <ElInput v-model="addForm.path" />
     </ElFormItem>
+    <ElFormItem prop="jsonpath" label="jsonpath">
+      <ElInput v-model="addForm.jsonpath" />
+    </ElFormItem>
   </ElForm>
 </template>
 <script lang="ts" setup>

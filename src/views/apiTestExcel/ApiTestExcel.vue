@@ -105,6 +105,7 @@ const keyList: (keyof ApiTestExcel)[] = [
   'headers',
   'globalHeaders',
   'zmip',
+  'ExpectedCodeFormat',
 ];
 const colKeyMap = keyList.reduce<{ [key in keyof ApiTestExcel]?: string }>(
   (o, el, i) => {
@@ -141,6 +142,7 @@ const beforeUpload = (file: any) => {
               'RequestDataFormat',
               'ActualDataFormat',
               'globalHeaders',
+              'ExpectedCodeFormat',
             ].includes(key)
           ) {
             o[key] = o[key].replace(/'/g, '"');

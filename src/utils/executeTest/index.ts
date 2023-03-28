@@ -1,9 +1,13 @@
 import { getValueByPath, pyDateFmt } from '..';
 import {
+  ApiTestActualDataFormat,
   ApiTestExcelPane,
   ApiTestExcelPaneResult,
   ApiTestExcelResult,
+  ApiTestExpectedCodeFormat,
+  ApiTestExpectedCodeFormatResult,
   ApiTestGlobalHeaderFormat,
+  ApiTestRequestDataFormat,
   ApiTestRequestDataFormatResult,
 } from '../../types';
 import Logger from './logger';
@@ -14,6 +18,89 @@ type GlobalMap = {
   prevresult: [];
   headers: { [key: string]: string };
 };
+const getValue = ({
+  valueConfig,
+  dataRow,
+  fromData,
+  pathKey = 'path',
+  jsonpathKey = 'jsonpath',
+}: {
+  valueConfig: {
+    [key in keyof ApiTestRequestDataFormatResult]?: ApiTestRequestDataFormatResult[key];
+  };
+  dataRow?: ApiTestExcelResult;
+  fromData?: Object;
+  pathKey?: 'path' | 'valuePath';
+  jsonpathKey?: 'jsonpath' | 'valueJsonpath';
+}) => {
+  // 如果是 now 类型，则将value设为当前时间戳
+  let value: any;
+  if (valueConfig.type === 'now') {
+    let now = new Date().getTime();
+    if (valueConfig.addTime) {
+      now += valueConfig.addTime * 1000;
+    }
+    if (valueConfig.timeFmt) {
+      value = pyDateFmt(valueConfig.timeFmt, new Date(now));
+    } else {
+      value = now.toString();
+    }
+    // 如果有前缀，则在value前拼上前缀
+    if (valueConfig.prefix) {
+      value = valueConfig.prefix + value;
+    }
+    // 如果有后缀，则在value后拼上后缀
+    if (valueConfig.suffix) {
+      value = valueConfig.prefix + value;
+    }
+  } else if (valueConfig.type == 'text') {
+    value = valueConfig.value || '';
+  } else {
+    let valueDict = fromData;
+    if (!valueDict) {
+      // 如果是 response 类型，且依赖的其他接口返回的code不是0，且依赖的接口测试不通过，则跳过这个接口，这个接口直接执行失败
+      if (
+        valueConfig.type === 'response' &&
+        dataRow &&
+        dataRow.Actual_code !== 0 &&
+        dataRow.Result !== 'pass'
+      ) {
+        dataRow.Result = 'fail';
+        dataRow.Reason = '引用用例执行失败';
+        dataRow.interfaceResponse = {};
+        return {
+          value: null,
+          flag: false,
+        };
+      }
+      // 将数据源设置成其他接口的传参
+      valueDict = dataRow?.data ?? {};
+      // 如果是 response 类型，将数据源改为其他接口的接口返回值
+      if (valueConfig.type === 'response') {
+        valueDict = dataRow?.interfaceResponse || {};
+      }
+    }
+    // 根据 path 从数据源中取值
+    value = getValueByPath(valueDict, valueConfig[pathKey]);
+    // 如果需要的值在列表中，则从列表中搜索
+    if (valueConfig.listSearch && Array.isArray(value)) {
+      for (let item of value) {
+        // listSearch 第一个参数为搜索时用到的key，第二个参数为搜索时用到的value，第三个参数为要取的值，
+        if (item[valueConfig.listSearch[0]] === valueConfig.listSearch[1]) {
+          value = item[valueConfig.listSearch[2]];
+          break;
+        }
+      }
+    }
+    if (valueConfig.jsonpath) {
+      value = getValueByPath(JSON.parse(value), valueConfig[jsonpathKey]);
+    }
+  }
+  return {
+    value,
+    flag: true,
+  };
+};
 
 const parseRequestDataFormat = (
   requestDataFormat: ApiTestRequestDataFormatResult[],
@@ -23,7 +110,7 @@ const parseRequestDataFormat = (
 ) => {
   if (requestDataFormat) {
     requestDataFormat.forEach((rdf) => {
-      let dataRow = null;
+      let dataRow = undefined;
       // 要取接口的下标值为目标接口的id - 1 加上其他已执行sheet的接口的数量
       if (typeof rdf.row !== 'undefined') {
         const tab = tabList.find(
@@ -33,61 +120,8 @@ const parseRequestDataFormat = (
           dataRow = tab.dataList[rdf.row];
         }
       }
-      rdf.type = rdf.type || '';
-      // 如果是 now 类型，则将value设为当前时间戳
-      let value: any;
-      if (rdf.type === 'now') {
-        let now = new Date().getTime();
-        if (rdf.addTime) {
-          now += rdf.addTime * 1000;
-        }
-        if (rdf.timeFmt) {
-          value = pyDateFmt(rdf.timeFmt, new Date(now));
-        } else {
-          value = now.toString();
-        }
-        // 如果有前缀，则在value前拼上前缀
-        if (rdf.prefix) {
-          value = rdf.prefix + value;
-        }
-        // 如果有后缀，则在value后拼上后缀
-        if (rdf.suffix) {
-          value = rdf.prefix + value;
-        }
-      } else if (rdf.type == 'text') {
-        value = rdf.value || '';
-      } else {
-        // 如果是 response 类型，且依赖的其他接口返回的code不是0，且依赖的接口测试不通过，则跳过这个接口，这个接口直接执行失败
-        if (
-          rdf.type === 'response' &&
-          dataRow &&
-          dataRow.Actual_code !== 0 &&
-          dataRow.Result !== 'pass'
-        ) {
-          dataRow.Result = 'fail';
-          dataRow.Reason = '引用用例执行失败';
-          dataRow.interfaceResponse = {};
-          return null;
-        }
-        // 将数据源设置成其他接口的传参
-        let valueDict = dataRow?.data ?? {};
-        // 如果是 response 类型，将数据源改为其他接口的接口返回值
-        if (rdf.type === 'response') {
-          valueDict = dataRow?.interfaceResponse || {};
-        }
-        // 根据 valuePath 从数据源中取值
-        value = getValueByPath(valueDict, rdf.valuePath);
-        // 如果需要的值在列表中，则从列表中搜索
-        if (rdf.listSearch && Array.isArray(value)) {
-          for (let item of value) {
-            // listSearch 第一个参数为搜索时用到的key，第二个参数为搜索时用到的value，第三个参数为要取的值，
-            if (item[rdf.listSearch[0]] === rdf.listSearch[1]) {
-              value = item[rdf.listSearch[2]];
-              break;
-            }
-          }
-        }
-      }
+      const { value, flag } = getValue({ valueConfig: rdf, dataRow });
+      if (!flag) return;
       if (value !== null) {
         // if 'base64' in rdf and rdf['base64'] == 1:
         //   value = base64.encodestring(value)
@@ -142,6 +176,12 @@ const parseRequestDataFormat = (
   }
 };
 
+const sleep = (time: number) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
+};
+
 export const testInterfaceCase = async (
   dataRow: ApiTestExcelResult,
   tabName: string,
@@ -163,6 +203,7 @@ export const testInterfaceCase = async (
     headers,
     globalHeaders,
     zmip,
+    ExpectedCodeFormat,
   } = dataRow;
   Logger.info(`正在执行 ${tabName} 第${id}条用例`);
   Logger.info(`请求方式是${method}`);
@@ -205,10 +246,10 @@ export const testInterfaceCase = async (
   }
   if (typeof result === 'object' && result) {
     if (ActualDataFormat) {
-      dataRow.Actual_code = getValueByPath(
-        result,
-        ActualDataFormat.path
-      ) as unknown as string | number;
+      dataRow.Actual_code = getValue({
+        valueConfig: ActualDataFormat,
+        fromData: result,
+      }).value;
     } else {
       dataRow.Actual_code = result?.code;
     }
@@ -217,13 +258,20 @@ export const testInterfaceCase = async (
     } else {
       dataRow.Reason = result?.msg;
     }
-    if (Expected_code === dataRow.Actual_code) {
+    dataRow.Expected_code = Expected_code;
+    if (ExpectedCodeFormat) {
+      dataRow.Expected_code = getValue({
+        valueConfig: ExpectedCodeFormat,
+        fromData: result,
+      }).value;
+    }
+    if (dataRow.Expected_code === dataRow.Actual_code) {
       dataRow.Result = 'pass';
       Logger.success('用例code比对结果测试通过');
     } else {
       dataRow.Result = 'fail';
       Logger.error(
-        `执行用例code比对报错 ${Expected_code} != ${dataRow.Actual_code}`
+        `执行用例code比对报错 ${dataRow.Expected_code} != ${dataRow.Actual_code}`
       );
     }
   } else {
@@ -231,11 +279,26 @@ export const testInterfaceCase = async (
     dataRow.Reason = '';
     dataRow.Result = '';
   }
+  if (
+    delay &&
+    (typeof delay !== 'string' || /^\d+$/.test(delay) || delay === 'y')
+  ) {
+    let sleepTime = 0;
+    if (delay === 'y') {
+      sleepTime = 2000;
+    } else {
+      sleepTime = +delay * 1000;
+    }
+    if (sleepTime > 0) await sleep(sleepTime);
+  }
 };
 
 const parseResult = (tabList: ApiTestExcelPane[]) => {
-  const ip = localStorage.getItem('api_test_interface_ip') ?? 'https://front.sit.suosihulian.com/gateway';
-  const zmIp = localStorage.getItem('api_test_interface_zmip') ?? 'https://pt-qa.lbian.cn';
+  const ip =
+    localStorage.getItem('api_test_interface_ip') ??
+    'https://front.sit.suosihulian.com/gateway';
+  const zmIp =
+    localStorage.getItem('api_test_interface_zmip') ?? 'https://pt-qa.lbian.cn';
   return tabList.map((tab) => {
     return {
       name: tab.name,
@@ -271,9 +334,25 @@ const parseResult = (tabList: ApiTestExcelPane[]) => {
         let ActualDataFormat = undefined;
         if (el.ActualDataFormat) {
           try {
-            ActualDataFormat = JSON.parse(el.ActualDataFormat) as {
-              path: string;
-            };
+            ActualDataFormat = JSON.parse(
+              el.ActualDataFormat
+            ) as ApiTestActualDataFormat;
+          } catch (error) {}
+        }
+        let ExpectedCodeFormat = undefined;
+        if (el.ExpectedCodeFormat) {
+          try {
+            ExpectedCodeFormat = JSON.parse(
+              el.ExpectedCodeFormat
+            ) as ApiTestExpectedCodeFormat;
+            if (ExpectedCodeFormat.listSearch) {
+              ExpectedCodeFormat = {
+                ...ExpectedCodeFormat,
+                listSearch: JSON.parse(
+                  ExpectedCodeFormat.listSearch
+                ) as string[],
+              } as ApiTestExpectedCodeFormatResult;
+            }
           } catch (error) {}
         }
         return {
@@ -284,6 +363,8 @@ const parseResult = (tabList: ApiTestExcelPane[]) => {
           globalHeaders,
           ActualDataFormat,
           url: (el.zmip === 'y' ? zmIp : ip) + el.url,
+          ExpectedCodeFormat:
+            ExpectedCodeFormat as ApiTestExpectedCodeFormatResult,
         };
       }),
     };

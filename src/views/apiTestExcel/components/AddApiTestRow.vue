@@ -50,18 +50,31 @@
         <ElOption label="y" value="y" />
       </ElSelect>
     </ElFormItem>
+    <ElFormItem prop="ExpectedCodeFormat" label="ExpectedCodeFormat">
+      <JsonEditor v-model="addForm.ExpectedCodeFormat" disabled>
+        <ElButton size="small" type="primary" v-if="addForm.ExpectedCodeFormat" @click="editExpected">修改</ElButton>
+        <ElButton size="small" type="primary" v-else @click="addExpected">添加</ElButton>
+        <ElButton size="small" type="primary" v-if="addForm.ExpectedCodeFormat" @click="addForm.ExpectedCodeFormat = ''">
+          清空
+        </ElButton>
+      </JsonEditor>
+    </ElFormItem>
   </ElForm>
   <CustomDialog v-model="actualDataVisible" title="添加" :onConfirm="onAddConfirm">
     <ActualDataFormatForm :detail="editData" ref="actualDataFormRef" @success="onSave" />
+  </CustomDialog>
+  <CustomDialog v-model="exceptedCodeVisible" title="添加" :onConfirm="onExpectedAddConfirm">
+    <ExpectedCodeFormatForm :detail="editExpectedData" ref="exceptedCodeFormRef" @success="onExpectedCodeSave" />
   </CustomDialog>
 </template>
 <script lang="ts" setup>
 import { FormInstance, FormRules } from 'element-plus';
 import { reactive, ref, toRaw } from 'vue';
-import { AddApiTestExcel, ApiTestActualDataFormat } from '../../../types';
+import { AddApiTestExcel, ApiTestActualDataFormat, ApiTestExpectedCodeFormat } from '../../../types';
 import { generateUuid } from '../../../utils';
 import CustomDialog from './CustomDialog.vue';
 import ActualDataFormatForm from './ActualDataFormatForm.vue'
+import ExpectedCodeFormatForm from './ExpectedDataFormatForm.vue'
 import GlobalHeaderList from './GlobalHeaderList.vue';
 import JsonEditor from './JsonEditor.vue';
 import RequestDataFormatList from './RequestDataFormatList.vue';
@@ -93,6 +106,7 @@ const addForm = reactive<AddApiTestExcel>(
     headers: '{}',
     globalHeaders: [],
     zmip: '',
+    ExpectedCodeFormat: '',
   }
 );
 const methodList = [
@@ -107,6 +121,7 @@ const methodList = [
 ];
 
 const actualDataVisible = ref(false);
+const exceptedCodeVisible = ref(false);
 
 const rules: FormRules = {
   method: [{ required: true, message: '请选择method' }],
@@ -127,7 +142,9 @@ const rules: FormRules = {
   ],
 };
 const actualDataFormRef = ref<InstanceType<typeof ActualDataFormatForm>>();
+const exceptedCodeFormRef = ref<InstanceType<typeof ExpectedCodeFormatForm>>();
 const editData = ref<ApiTestActualDataFormat | undefined>(undefined);
+const editExpectedData = ref<ApiTestExpectedCodeFormat | undefined>(undefined);
 const addActualData = () => {
   editData.value = undefined;
   actualDataVisible.value = true;
@@ -136,8 +153,20 @@ const editActualData = () => {
   editData.value = addForm.ActualDataFormat ? JSON.parse(addForm.ActualDataFormat) : undefined;
   actualDataVisible.value = true;
 }
+const addExpected = () => {
+  editExpectedData.value = undefined;
+  actualDataVisible.value = true;
+}
+const editExpected = () => {
+  editExpectedData.value = addForm.ExpectedCodeFormat ? JSON.parse(addForm.ExpectedCodeFormat) : undefined;
+  actualDataVisible.value = true;
+}
 const onAddConfirm = () => {
   actualDataFormRef.value?.onSubmit();
+  return Promise.resolve();
+}
+const onExpectedAddConfirm = () => {
+  exceptedCodeFormRef.value?.onSubmit();
   return Promise.resolve();
 }
 const formRef = ref<FormInstance>();
@@ -156,6 +185,10 @@ const onSubmit = () => {
 };
 const onSave = (val: ApiTestActualDataFormat) => {
   addForm.ActualDataFormat = JSON.stringify(val);
+  editData.value = undefined;
+}
+const onExpectedCodeSave = (val: ApiTestExpectedCodeFormat) => {
+  addForm.ExpectedCodeFormat = JSON.stringify(val);
   editData.value = undefined;
 }
 defineExpose({

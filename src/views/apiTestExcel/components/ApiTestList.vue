@@ -30,6 +30,7 @@
       </ElTableColumn>
       <ElTableColumn prop="zmip" label="zmip" :width="60">
       </ElTableColumn>
+      <ElTableColumn prop="ExpectedCodeFormat" label="ExpectedCodeFormat" :width="170"></ElTableColumn>
       <ElTableColumn label="操作" :width="200" fixed="right">
         <template v-slot="{ row, $index }">
           <div class="operation-btns">
@@ -216,6 +217,7 @@ const onSave = (saveData: AddApiTestExcel) => {
     headers,
     globalHeaders,
     zmip,
+    ExpectedCodeFormat,
   } = saveData;
   const dataStr = data ? JSON.stringify(JSON.parse(data)) : '{}';
   const FormDataStr = FormData ? JSON.stringify(JSON.parse(FormData)) : '{}';
@@ -233,7 +235,8 @@ const onSave = (saveData: AddApiTestExcel) => {
     modifyData.delay = delay;
     modifyData.headers = headersStr;
     modifyData.globalHeaders = JSON.stringify(globalHeaders);
-    modifyData.zmip = zmip
+    modifyData.zmip = zmip;
+    modifyData.ExpectedCodeFormat = ExpectedCodeFormat;
   } else {
     props.dataList.push({
       _id,
@@ -255,6 +258,7 @@ const onSave = (saveData: AddApiTestExcel) => {
       headers: headersStr,
       globalHeaders: JSON.stringify(globalHeaders),
       zmip,
+      ExpectedCodeFormat,
     });
   }
   sessionStorage.setItem('tabList', tabList?.value ? JSON.stringify(tabList.value) : '');
